@@ -1,0 +1,8 @@
+private bridge range 2-3 ip (zählt hoch)
+docker run --ip 
+
+docker run --rm -dt --ip 172.17.0.3 --name nginx2 -p 8080:80 d-reg:5000/nginx
+
+docker run --add-host=nginx:172.17.0.3 --rm -it alpine
+
+

@@ -1,0 +1,18 @@
+# syntax=docker/dockerfile:1
+FROM ubuntu:22.04
+MAINTAINER heiko.stein@etomer.com
+
+RUN apt-get update -y
+RUN apt-get upgrade -y
+
+RUN apt-get install curl -y
+
+RUN mkdir /script
+
+WORKDIR /script
+
+COPY push_index_file.sh /script
+
+RUN chmod 755 /script/push_index_file.sh
+
+CMD ["/script/push_index_file.sh"]
