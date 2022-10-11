@@ -2,8 +2,8 @@
 
 USER="hs"
 HOST="$(uname -n)"
-LOCAL_STORE="/home/${USER}/tools/docker-ws/registry/store"
-LOCAL_CERTS="/home/${USER}/tools/docker-ws/registry/certs"
+LOCAL_STORE="/home/${USER}/tools/docker-ws/ex_registry/store"
+LOCAL_CERTS="/home/${USER}/tools/docker-ws/ex_registry/certs"
 CRT="${HOST}.crt"
 KEY="${HOST}.key"
 MAPPED_PORT="5000"
