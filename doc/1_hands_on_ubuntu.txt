@@ -1,0 +1,141 @@
+- Requirements
+	- Internetzugang
+	- Ubuntu 22.04 
+		-> # sudo apt update -y && sudo apt upgrade -y
+		-> # sudo apt install  bind9-dnsutils vim sshpass \
+		   resolvconf python3.10-venv inetutils-ping python-is-python3 \
+		   psmisc bash-completion bridge-utils jq skopeo tree nano
+		-> # sudo timedatectl set-timezone Europe/Berlin
+
+- Optional
+# sudo pvcreate /dev/sdb
+# sudo vgcreate docker-vg /dev/sdb
+# sudo lvcreate -l 100%FREE -n v1 docker-vg
+# sudo mkfs.xfs /dev/docker-vg/v1
+# sudo mkdir /var/lib/docker
+# sudo vi /etc/fstab
+...
+/dev/mapper/docker--vg-v1 /var/lib/docker       xfs     defaults 1 1
+...
+		
+
+- Ist schon docker relevantes installiert bzw. proaktiv loeschen
+# sudo apt remove docker docker-engine docker.io containerd runc
+# sudo systemctl reboot
+
+
+- Installation docker
+- Siehe https://docs.docker.com/engine/install/ubuntu/
+# sudo apt-get install ca-certificates curl gnupg lsb-release -y
+# sudo mkdir -p /etc/apt/keyrings
+# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+# echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# sudo apt update -y && sudo apt upgrade -y
+# sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+
+
+
+- Link to docker-compose
+# sudo ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
+# docker-compose version
+
+
+
+- Shell-Stuff
+# sudo curl https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
+# sudo curl -L https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+
+
+
+- Non-Root
+# sudo usermod -aG docker [non-root user]
+# id -Gn [non-root user] # reconnect before prove this
+# sudo systemctl stop docker docker.socket
+# sudo rm /var/run/docker.sock
+# sudo systemctl start --now docker
+- reconnect as [non-root user]
+
+
+- service aktivieren/check
+# sudo systemctl status docker
+# pgrep -lf dockerd
+# pstree -alpsSZ 12829
+systemd,1,`unconfined'
+  └─dockerd,12829,`unconfined' -H fd:// --containerd=/run/containerd/containerd.sock
+      ├─{dockerd},12830,`unconfined'
+      ├─{dockerd},12831,`unconfined'
+      ├─{dockerd},12832,`unconfined'
+      ├─{dockerd},12833,`unconfined'
+      ├─{dockerd},12837,`unconfined'
+      └─{dockerd},12838,`unconfined'
+
+
+- check
+# sudo docker version
+# sudo docker system info
+-> bei Warning (context: bridged packets have to traverse iptables rules)
+WARNING: bridge-nf-call-iptables is disabled 
+WARNING: bridge-nf-call-ip6tables is disabled
+-> sysctl
+# sysctl -w net.bridge.bridge-nf-call-iptables=1
+# sysctl -w net.bridge.bridge-nf-call-ip6tables=1
+
+
+
+- Network ?
+# ip a s
+...
+4: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default
+    link/ether 02:42:04:e2:06:ba brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:4ff:fee2:6ba/64 scope link
+       valid_lft forever preferred_lft forever
+...
+
+
+- der erste container ...
+# docker search alpine
+# docker run -dt --name mein-erster-container alpine
+# docker run -dt -h "willi" --rm --name mein-zweiter-container alpine
+# docker ps
+
+
+
+- resourcen
+# docker container stats mein-erster-container
+# watch docker top mein-erster-container
+# docker system df -v
+
+
+
+- container/image info
+# docker inspect mein-erster-container
+# docker image inspect alpine -f "{{json .GraphDriver.Data }}" | jq
+# docker image inspect --format='{{.Id}} {{.Parent}}' alpine
+# docker images --no-trunc
+
+- mal einloggen 
+# docker exec -ti mein-erster-container /bin/sh
+...
+# docker exec -ti mein-weiter-container /bin/sh
+/ # env
+HOSTNAME=willi
+...
+
+
+- stoppen/starten/löschen
+# docker ps
+# docker stop mein-erster-container
+# docker ps -a
+# docker rm mein-erster-container
+# docker images
+# docker rmi alpine
+# ...
+
+
+
+
+

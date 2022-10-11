@@ -1,0 +1,32 @@
+- 2 Bridges
+# docker network create --driver=bridge --subnet=10.0.0.0/8   --ip-range=10.0.0.0/8  --gateway=10.0.0.1 -o "com.docker.network.bridge.name"="br-app1" br-app1
+# docker network create --driver=bridge --subnet=100.0.0.0/8   --ip-range=100.0.0.0/8  --gateway=100.0.0.1 -o "com.docker.network.bridge.name"="br-app2" br-app2
+
+# docker network list
+NETWORK ID          NAME                DRIVER              SCOPE
+8155e827baf9        br-app1             bridge              local
+fe4562467e00        br-app2             bridge              local
+76a3d6ca6b94        bridge              bridge              local
+20260843402e        host                host                local
+b863fdcb3e5e        none                null                local
+
+# docker run -dt  -h ap-2-net --name ap-2-net --rm --net br-app1 d-reg:5000/alpine
+# docker network connect br-app2 ap-2-net
+
+# docker container inspect --format '{{.Name}}{{"\n"}}{{ range .NetworkSettings.Networks}}{{.IPAddress}}{{"\n"}}{{end}}' $(docker container ls -lq)
+/ap-2-net
+10.0.0.2
+100.0.0.2
+
+# docker inspect  -f '{{range .Containers}}{{.IPv4Address}}{{"\n"}}{{end}}' br-app1
+10.0.0.2/8
+
+# docker inspect  -f '{{range .Containers}}{{.IPv4Address}}{{"\n"}}{{end}}' br-app2
+100.0.0.2/8
+
+
+
+
+
+
+

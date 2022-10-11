@@ -1,0 +1,26 @@
+- bind mount
+# docker run -dt --rm --name "u1" -v /mnt:/mnt ubuntu
+# touch /mnt/dat.1
+# docker exec -it u1 bash
+root@6cb0c656f692:/# ls /mnt
+dat.1
+
+- volume
+# docker volume create dockerv1
+# docker run -dt --name "d2" --mount source=dockerv1,target=/mnt alpine
+# docker inspect d2 -f "{{.Mounts }}"
+[{volume dockerv1 /var/lib/docker/volumes/dockerv1/_data /mnt local z true }]
+
+# docker inspect <container> -f '{{json .Mounts }}'|jq
+[
+  {
+    "Type": "bind",
+    "Source": "/tools",
+    "Destination": "/tools",
+    "Mode": "",
+    "RW": true,
+    "Propagation": "rprivate"
+  }
+]
+
+

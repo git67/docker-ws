@@ -1,0 +1,10 @@
+- only json
+# docker history d-reg:5000/nginx --no-trunc --format '{{json .}}' | jq
+
+- single key, first look
+# docker history d-reg:5000/nginx --format '{{json .CreatedBy}}' | jq
+- deeper look
+# docker history d-reg:5000/nginx --no-trunc --format '{{json .CreatedBy}}' | jq
+
+- network investigation
+# docker network inspect bridge --format '{{json .Containers}}'|jq .'[]| .Name, .IPv4Address'

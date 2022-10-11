@@ -1,0 +1,77 @@
+- componenten/daemons und anderes spaßiges zeugs
+- service und journal
+# sudo systemctl status docker
+# sudo systemctl status docker.socket
+# journalctl -u docker
+# journalctl -u docker.socket
+
+
+
+- dockerd/containerd (ohne gestarteten container ...)
+# pgrep -lf dockerd
+3409 dockerd
+# pgrep -lf containerd
+3405 containerd
+
+# pstree -a 3409
+dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+  └─10*[{dockerd}]
+  
+# pstree -a 3405
+containerd
+  └─11*[{containerd}]
+
+- dockerd/containerd (mit gestarteten container ...)
+# pgrep -lf dockerd
+3409 dockerd
+# pgrep -lf containerd
+3405 containerd
+14321 containerd-shim
+
+# pstree -a 14521
+containerd-shim -namespace moby -workdir /var/lib/containerd/io.containerd.runtime.v1.linux/moby/9952f18d789d639d5bab11fbe3a127f526bb18f4822e3395b2a0d6485f900d26 -address /run/containerd/containerd.sock -containerd-binary/usr/bin/container
+  ├─sh
+  └─9*[{containerd-shim}]
+# pstree -a 3409
+dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+  └─10*[{dockerd}]
+# pstree -a 3405
+containerd
+  ├─containerd-shim -namespace moby -workdir /var/lib/containerd/io.containerd.runtime.v1.linux/moby/9952f18d789d639d5bab11fbe3a127f526bb18f4822e3395b2a0d6485f900d26 -address /run/containerd/containerd.sock -containerd-binary...
+  │   ├─sh
+  │   └─10*[{containerd-shim}]
+  └─11*[{containerd}]
+
+------------------------------------------------------------------------------------
+- config/logs/directories
+
+# cd /etc/docker/
+# vi daemon.json
+{
+  "debug": true
+}
+
+# journalctl -u docker
+
+# docker info
+
+# ll /etc/{docker,containerd}
+
+# sudo ls /var/lib/{docker,containerd}
+
+
+# sudo ls -laF /var/run/docker*
+
+
+------------------------------------------------------------------------------------
+- driver logtype/logfile
+# docker inspect -f {{.HostConfig.LogConfig.Type}} <container>
+# docker inspect -f {{.LogPath}} <container>
+
+# docker logs --details -t <container>
+# docker logs --tail 1 <container>
+
+------------------------------------------------------------------------------------
+- layercake
+# docker images --no-trunc
+# docker image inspect --format='{{.Id}} {{.Parent}}' <image>

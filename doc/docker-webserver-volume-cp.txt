@@ -1,0 +1,20 @@
+
+
+# vi /home/hs/tools/docker/docker-ws/nginx/index.html
+<h1>
+        docker run --rm -dt --name nginx1 -v /home/hs/tools/docker/docker-ws/nginx:/usr/share/nginx/html -p 8080:80 d-reg:5000/nginx
+</h1>
+
+# docker run --rm -dt --name nginx1 -v /home/hs/tools/docker/docker-ws/nginx:/usr/share/nginx/html -p 8080:80 d-reg:5000/nginx
+
+# wget localhost:8080
+
+
+# vi message.html
+<h1>
+        docker cp message.html nginx2:/usr/share/nginx/html/index.html
+</h1>
+
+# docker run --rm -dt --name nginx2 -p 8888:80 d-reg:5000/nginx
+
+# docker cp message.html nginx2:/usr/share/nginx/html/index.html
