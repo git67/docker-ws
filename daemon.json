@@ -1,6 +1,5 @@
 {
   "insecure-registries": [],
-  "data-root": "/docker_vol",
   "debug": true,
   "log-driver": "json-file",
   "log-opts": {
