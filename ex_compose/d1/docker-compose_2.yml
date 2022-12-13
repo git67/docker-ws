@@ -1,0 +1,6 @@
+version: "3.9"
+services:
+  container1:
+    image: nginx
+  container2:
+    image: nginx

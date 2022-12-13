@@ -1,0 +1,11 @@
+FROM ubuntu/nginx
+
+RUN apt update -y
+RUN apt upgrade -y
+RUN apt install openssh-server -y
+RUN apt install vim -y
+RUN sed -i '$a PermitRootLogin '"yes" /etc/ssh/sshd_config
+RUN service ssh start
+RUN sh -c 'echo "root:root" | chpasswd'
+
+CMD ["./init.sh"]

@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  container1:
+    container_name: nginx_8888
+    image: nginx
+    ports: 
+      - 8888:80
+
+  container2:
+    container_name: nginx_8889
+    image: nginx
+    ports: 
+      - 8889:80
+    volumes:
+      - type: bind
+        source: ./html
+        target: /usr/share/nginx/html
+

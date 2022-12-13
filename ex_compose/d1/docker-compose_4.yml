@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  ubuntu_linked:
+    container_name: ubuntu_linked
+    links: 
+      - nginx-8889
+    depends_on:
+      - nginx-8889
+    command: "sleep 9000"
+    build:
+      context: ./dockerfile
+      dockerfile: DOCKERFILE.ubuntu_linked
+
+  nginx-8889:
+    container_name: nginx-8889
+    image: nginx
+    ports: 
+      - 8889:80
+    volumes:
+      - type: bind
+        source: ./html
+        target: /usr/share/nginx/html
+
+

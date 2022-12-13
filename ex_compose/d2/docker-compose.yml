@@ -1,0 +1,68 @@
+---
+services:
+  normal_websrv:
+    container_name: normal
+    image: nginx
+    ports:
+      - "8888:80"
+    networks:
+      - simple
+
+  mount_websrv:
+    container_name: mount
+    image: nginx
+    ports:
+      - "8889:80"
+    volumes:
+      - type: bind
+        source: ./assets
+        target: /usr/share/nginx/html
+    networks:
+      - simple
+    
+  websrv:
+    tty: true
+    container_name: "websrv"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost:80"]
+      interval: 15s
+      retries: 10
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.websrv
+    volumes:
+      - "./websrv:/root/websrv"
+    command: "./root/websrv/init.sh"
+    networks:
+      - ethernet
+    ports:
+      - "8890:80"
+      - "49125:22"
+  
+  sender:
+    tty: true
+    container_name: "sender"
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.sender
+    volumes:
+      - "./sender:/root/sender"
+      - type: bind
+        source: "./assets"
+        target: "/root/assets"
+    command: "./root/sender/init.sh"
+    networks:
+      - ethernet
+    depends_on: 
+      - websrv
+       
+networks:
+  ethernet:
+    name: ethernet
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 170.20.0.0/24
+        gateway: 170.20.0.1
+  simple:
+    name: simple
