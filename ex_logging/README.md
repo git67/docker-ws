@@ -13,7 +13,7 @@ docker ps
 
 #### inspect the log written by the injected script
 ```
-docker logs -f log
+docker logs -f log # break with ctrl-c
 sudo tail -f $(docker inspect -f {{.LogPath}} log)
 ```
 
