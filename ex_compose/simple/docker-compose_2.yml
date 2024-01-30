@@ -4,3 +4,11 @@ services:
     image: nginx
   container2:
     image: nginx
+  container3:
+    image: nginx
+  container4:
+    image: nginx
+  container5:
+    image: nginx
+  container6:
+    image: nginx
